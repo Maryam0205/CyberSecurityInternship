@@ -1,0 +1,15 @@
+{
+  "name": "vulnerable-user-management",
+  "version": "1.0.0",
+  "description": "Intentionally vulnerable User Management System for Week 1 security assessment.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UserHub — Connect with your community</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="brand">
+        <span class="brand-mark">U</span>
+        <span>UserHub</span>
+      </a>
+      <div class="nav-links">
+        <% if (user) { %>
+          <a class="nav-link" href="/profile">Profile</a>
+          <a class="nav-link" href="/users">Members</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        <% } else { %>
+          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link active" href="/signup">Sign up</a>
+        <% } %>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero">
+      <h1>Welcome to UserHub.</h1>
+      <p>A simple, friendly place to manage your account and share a little about yourself with the community.</p>
+      <div class="hero-actions">
+        <% if (user) { %>
+          <a href="/profile" class="btn btn-light">Go to your profile</a>
+          <a href="/users" class="btn btn-ghost">Browse members</a>
+        <% } else { %>
+          <a href="/signup" class="btn btn-light">Create your account</a>
+          <a href="/login" class="btn btn-ghost">I already have one</a>
+        <% } %>
+      </div>
+    </section>
+
+    <div class="card-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Personal profile</h3>
+        <p>Pick a username, add a short bio, and let the community get to know you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Member directory</h3>
+        <p>Discover other members of the community and reach out to start a conversation.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>Fast &amp; lightweight</h3>
+        <p>Built on Node.js + Express. Boots in seconds, runs entirely on your machine.</p>
+      </div>
+    </div>
+
+    <% if (user) { %>
+      <div class="card">
+        <h2>Welcome back, <%- user.username %>!</h2>
+        <p class="card-sub">Pick up where you left off.</p>
+        <a href="/profile" class="btn btn-primary">Open your profile</a>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>
