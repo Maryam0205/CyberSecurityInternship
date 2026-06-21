@@ -1,0 +1,4 @@
+{
+  "_comment": "App-layer IP blocklist. Fail2Ban handles network-layer bans; this file is a defence-in-depth list the app reloads every 10s. Format: array of IP strings, or { blocked: [...] }.",
+  "blocked": []
+}

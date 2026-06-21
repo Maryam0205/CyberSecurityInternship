@@ -1,0 +1,83 @@
+# docker-compose for UserHub Secure (Week 6 Task 2) + WAF bonus.
+#
+# Three services:
+#   waf   — nginx + ModSecurity in front, with OWASP CRS rules.
+#   app   — the Node.js app, only reachable through the WAF.
+#   fail2ban — watches the app's security.log and bans abusive IPs.
+#
+# Usage:
+#   cp .env.example .env && edit
+#   docker compose up --build
+
+services:
+  app:
+    build: .
+    image: userhub-secure:latest
+    container_name: userhub-app
+    env_file: .env
+    # The WAF is the only network entry point. App stays on the internal network.
+    expose:
+      - "3000"
+    networks:
+      - internal
+    volumes:
+      - ./security.log:/app/security.log
+      - ./config/blocked-ips.json:/app/config/blocked-ips.json:ro
+    # Read-only root FS; the only writable path is the mounted log.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  waf:
+    image: owasp/modsecurity-crs:nginx-alpine
+    container_name: userhub-waf
+    depends_on:
+      - app
+    environment:
+      BACKEND: "http://app:3000"
+      # Block on any rule match scoring >=5 (anomaly scoring engine default).
+      PARANOIA: "1"
+      ANOMALY_INBOUND: "5"
+      ANOMALY_OUTBOUND: "4"
+      MODSEC_AUDIT_ENGINE: "RelevantOnly"
+    ports:
+      - "8080:8080"
+    networks:
+      - internal
+      - external
+    volumes:
+      - ./config/nginx-waf:/etc/modsecurity.d/owasp-crs.d/custom:ro
+    restart: unless-stopped
+
+  fail2ban:
+    image: crazymax/fail2ban:latest
+    container_name: userhub-fail2ban
+    depends_on:
+      - app
+    # Needs host network + NET_ADMIN to actually inject iptables rules.
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./security.log:/var/log/userhub/security.log:ro
+      - ./config/fail2ban/filter.d:/etc/fail2ban/filter.d/custom:ro
+      - ./config/fail2ban/jail.local:/etc/fail2ban/jail.d/userhub.local:ro
+    restart: unless-stopped
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge

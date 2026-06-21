@@ -1,0 +1,10 @@
+nmap
+masscan
+nikto
+acunetix
+nessus
+openvas
+wpscan
+dirb
+gobuster
+hydra

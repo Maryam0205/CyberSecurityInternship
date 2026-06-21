@@ -73,6 +73,7 @@
         <div class="bio-display"><%= user.bio %></div>
 
         <form method="POST" action="/profile">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <div class="form-group">
             <label class="form-label" for="bio">Update bio</label>
             <textarea class="form-textarea" id="bio" name="bio" maxlength="1000" placeholder="Write something about yourself..."><%= user.bio %></textarea>

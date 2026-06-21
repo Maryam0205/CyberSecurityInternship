@@ -1,0 +1,31 @@
+# Fail2Ban jail config for UserHub Secure (Week 4 Task 1).
+#
+# Install:
+#   sudo cp filter.d/userhub-auth.conf /etc/fail2ban/filter.d/userhub-auth.conf
+#   sudo cp jail.local                 /etc/fail2ban/jail.d/userhub-auth.local
+#   sudo systemctl reload fail2ban
+#
+# Verify:
+#   sudo fail2ban-client status userhub-auth
+
+[DEFAULT]
+# Use systemd if you ship logs via journald, else `auto` reads files directly.
+backend  = auto
+# Email recipient for ban notifications. Configure sendmail/postfix or
+# replace `action = ...` below with `mail-whois` / `sendmail-whois` etc.
+destemail = security@example.com
+sender    = fail2ban@example.com
+banaction = iptables-multiport
+
+[userhub-auth]
+enabled  = true
+filter   = userhub-auth
+# Path on the host where the app's security.log is mounted/written.
+logpath  = /var/log/userhub/security.log
+maxretry = 5
+findtime = 600
+bantime  = 3600
+# Ports to drop traffic on for banned IPs (HTTP/HTTPS).
+port     = http,https
+# Alert sysadmins on every ban with the offender's whois info.
+action   = %(action_mwl)s
